@@ -23,8 +23,16 @@ class CliffWalkingEnv(discrete.DiscreteEnv):
         new_position = np.array(current) + np.array(delta)
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
-        reward = -100.0 if self._cliff[tuple(new_position)] else -1.0
-        is_done = self._cliff[tuple(new_position)] or (tuple(new_position) == (3,11))
+        if self._cliff[tuple(new_position)]:
+            reward = -100
+            is_done = True
+        elif tuple(new_position) == (3, 11):
+            reward = -1
+            is_done = True
+        else:
+            reward = -1
+            is_done = False
+            
         return [(1.0, new_state, reward, is_done)]
 
     def __init__(self):
